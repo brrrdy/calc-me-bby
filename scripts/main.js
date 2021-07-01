@@ -7,8 +7,12 @@
  * https://www.theodinproject.com/paths/foundations/courses/foundations/lessons/calculator
  */
 
-/** Global var for calulator display value */
-let DISPLAY = "";
+ const KEYS = ["1","2","3","4","5","6","7","8","9","0",".","="];
+ const OPS = ["C","÷", "×", "−", "+"];
+
+/** Global vars */
+let DISPLAY = ""; // current display value
+let LASTRESULT = 0; // last result for carrying values forward
 
 /**
  * Main entry point for app
@@ -18,19 +22,106 @@ function main() {
   createOperators();
 }
 
-function pushToDisplayInput(input) {
-  DISPLAY += input;
+/**
+ * Clears the display input field
+ */
+function clearDisplayInput() {
   const displayInput = document.querySelector(".display-input");
-  displayInput.textContent = DISPLAY;
+  displayInput.textContent = "";
+  DISPLAY = "";
 }
 
 /**
- * Defines and creates a 4x3 keypad from numbers
+ * Clears all of the display output entries
+ */
+function clearDisplayOutput() {
+  let clearOutput = document.querySelectorAll(".display-output .output");
+  for (let output of clearOutput) {
+    output.remove();
+  }
+}
+
+
+/** 
+ * Handles various inputs from the keypad/operator keys 
+ */
+function handleInput(input) {
+  if (input === "=") {
+    // attempt to parse input
+    console.log(DISPLAY);
+    let op = getOperator();
+    let terms = getTerms(op);
+    let result = operate(op, parseFloat(terms[0]), parseFloat(terms[1]));
+    pushToDisplayOutput(DISPLAY, result);
+    LASTRESULT = result;
+    clearDisplayInput();
+    return;
+  } else if (input === "."){
+    // check if decimal point already exists in display term
+    return;
+  } else if (input === "C") {
+    if (DISPLAY === "") {
+      clearDisplayOutput();
+    } else {
+      clearDisplayInput();
+    }
+    return;
+  }
+  pushToDisplayInput(input);
+}
+
+/**
+ * Gets the terms split by the first operator in DISPLAY
+ * 
+ * @param {string} op The operator in the current DISPLAY equation
+ * @returns A length 2 array of terms split by "op"
+ */
+function getTerms(op) {
+  return DISPLAY.split(op);
+}
+
+/**
+ * Gets the current DISPLAY's operator
+ * 
+ * @returns First operator in the current DISPLAY equation
+ */
+function getOperator() {
+  for (let op of OPS) {
+    if (DISPLAY.indexOf(op) !== -1) {
+      return op;
+    }
+  }
+}
+
+/**
+ * Creates and appends an output element with a given equation and result
+ * 
+ * @param {string} equation Equation to display in historical output
+ * @param {string} result Right side result to display with the equation
+ */
+function pushToDisplayOutput(equation, result) {
+  const displayout = document.querySelector(".display-output");
+  displayout.appendChild(createOutput(equation, result));
+}
+
+/**
+ * Appends an input string to the calculator input display and updates
+ * the DISPLAY variable
+ * 
+ * @param {string} input String to append to the input display
+ */
+function pushToDisplayInput(input) {
+  DISPLAY += input;
+  const displayInput = document.querySelector(".display-input");
+  displayInput.textContent = DISPLAY;  
+}
+
+/**
+ * Defines and creates a 4x3 keypad from KEYS global array
  */
 function createKeypad() {
   const keypad = document.querySelector(".keypad");
 
-  const keys = ["1","2","3","4","5","6","7","8","9","0",".","="];
   const colCount = 3;
   const rowCount = 4;
 
@@ -39,10 +130,19 @@ function createKeypad() {
     keyRow.classList.add("keypad-row");
     // loop thru col, create/add button to row
     for (let j = 0; j < colCount; j++) {
-      const button = document.createElement("button");
-      button.classList.add("keypad-button");
-      button.textContent = keys[(i*colCount)+j];
-      keyRow.appendChild(button);
+      let keyIndex = (i*colCount)+j;
+      if (KEYS[keyIndex]) {
+        const button = document.createElement("button");
+        button.classList.add("keypad-button");
+
+        button.textContent = KEYS[keyIndex];
+
+        button.addEventListener("click", (e) => {
+          handleInput(e.target.textContent);
+        });
+
+        keyRow.appendChild(button);
+      }
     }
     keypad.appendChild(keyRow);
   }
@@ -50,19 +150,20 @@ function createKeypad() {
 
 
 /**
- * Defines and creates supported arithmetic operators
+ * Defines and creates supported arithmetic operators from OPS global array
  */
 function createOperators() {
   const operators = document.querySelector(".operators");
 
-  const ops = ["CLR","÷", "×", "−", "+"]
-
   const opCol = document.createElement("div");
   opCol.classList.add("operators-col");
-  for (let op of ops) {
+  for (let op of OPS) {
     const button = document.createElement("button");
     button.classList.add("operator-button");
     button.textContent = op;
+    button.addEventListener("click", (e) => {
+      handleInput(e.target.textContent);
+    });
     opCol.appendChild(button);
   }
   operators.appendChild(opCol);
@@ -106,13 +207,13 @@ function operate(op, n1, n2) {
     case "+":
       return addition(n1,n2);
       break;
-    case "-":
+    case "−": // U+2212
       return subtraction(n1,n2);
       break;
-    case "*":
+    case "×": // U+00D7
       return multiplication(n1,n2);
       break;
-    case "/":
+    case "÷":
       return division(n1,n2);
       break;
   }
@@ -169,12 +270,12 @@ main();
 /**
  *  Janky console testing zone
  */
-console.log(`64 / 16 = ${operate("/",64,16)}`);
-console.log(`4 * 8 = ${operate("*",4,8)}`);
-console.log(`10 - 2 = ${operate("-",10,2)}`);
-console.log(`5 + 6 = ${operate("+",5,6)}`);
+// console.log(`64 / 16 = ${operate("/",64,16)}`);
+// console.log(`4 * 8 = ${operate("*",4,8)}`);
+// console.log(`10 - 2 = ${operate("-",10,2)}`);
+// console.log(`5 + 6 = ${operate("+",5,6)}`);
 
 
-const displayout = document.querySelector(".display-output");
-displayout.appendChild(createOutput("1 + 2", "3"));
+// const displayout = document.querySelector(".display-output");
+// displayout.appendChild(createOutput("1 + 2", "3"));
 

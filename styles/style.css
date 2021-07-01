@@ -26,6 +26,7 @@ div.display-output {
   flex-flow: column nowrap;
   justify-content: stretch;
   align-items: stretch;
+  height: 108px;
 }
 
 div.output, div.display-input {
@@ -49,6 +50,7 @@ div.equation {
 }
 div.equation::after {
   content: " =";
+  margin-right: 0.5em;
 }
 
 div.result {
