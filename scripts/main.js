@@ -10,9 +10,78 @@
 /**
  * Main entry point for app
  */
-
 function main() {
-  console.log("Start!");
+  createKeypad();
+  createOperators();
+}
+
+/**
+ * Defines and creates a 4x3 keypad from numbers
+ */
+function createKeypad() {
+  const keypad = document.querySelector(".keypad");
+
+  const keys = ["1","2","3","4","5","6","7","8","9","0",".","="];
+  const colCount = 3;
+  const rowCount = 4;
+
+  for (let i = 0; i < rowCount; i++) {
+    const keyRow = document.createElement("div");
+    keyRow.classList.add("keypad-row");
+    // loop thru col, create/add button to row
+    for (let j = 0; j < colCount; j++) {
+      const button = document.createElement("button");
+      button.classList.add("keypad-button");
+      button.textContent = keys[(i*colCount)+j];
+      keyRow.appendChild(button);
+    }
+    keypad.appendChild(keyRow);
+  }
+}
+
+
+/**
+ * Defines and creates supported arithmetic operators
+ */
+function createOperators() {
+  const operators = document.querySelector(".operators");
+
+  const ops = ["CLR","÷", "×", "−", "+"]
+
+  const opCol = document.createElement("div");
+  opCol.classList.add("operators-col");
+  for (let op of ops) {
+    const button = document.createElement("button");
+    button.classList.add("operator-button");
+    button.textContent = op;
+    opCol.appendChild(button);
+  }
+  operators.appendChild(opCol);
+}
+
+/**
+ * Creates and returns a div with the equation and result inputs
+ * 
+ * @param {string} equation Equation to display
+ * @param {string} result Calculated result
+ * @returns Div element with classed and structured input
+ */
+function createOutput(equation, result) {
+  const eq = document.createElement("div");
+  eq.classList.add("equation");
+  eq.textContent = equation;
+
+  const res = document.createElement("div");
+  res.classList.add("result");
+  res.textContent = result;
+
+  const out = document.createElement("div");
+  out.classList.add("output");
+
+  out.appendChild(eq);
+  out.appendChild(res);
+
+  return out;
 }
 
 /**
@@ -23,7 +92,6 @@ function main() {
  * @param {number} n2 Second operand
  * @returns {number} The operation result
  */
-
 function operate(op, n1, n2) {
   switch(op) {
     case "+":
@@ -87,6 +155,8 @@ function division(n1,n2) {
 }
 
 
+main();
+
 /**
  *  Janky console testing zone
  */
@@ -95,4 +165,6 @@ console.log(`4 * 8 = ${operate("*",4,8)}`);
 console.log(`10 - 2 = ${operate("-",10,2)}`);
 console.log(`5 + 6 = ${operate("+",5,6)}`);
 
-main();
+
+const displayout = document.querySelector(".display-output");
+displayout.appendChild(createOutput("1 + 2", "3"));
