@@ -7,12 +7,21 @@
  * https://www.theodinproject.com/paths/foundations/courses/foundations/lessons/calculator
  */
 
+/** Global var for calulator display value */
+let DISPLAY = "";
+
 /**
  * Main entry point for app
  */
 function main() {
   createKeypad();
   createOperators();
+}
+
+function pushToDisplayInput(input) {
+  DISPLAY += input;
+  const displayInput = document.querySelector(".display-input");
+  displayInput.textContent = DISPLAY;
 }
 
 /**
@@ -168,3 +177,4 @@ console.log(`5 + 6 = ${operate("+",5,6)}`);
 
 const displayout = document.querySelector(".display-output");
 displayout.appendChild(createOutput("1 + 2", "3"));
+
