@@ -3,8 +3,12 @@ body {
 }
 
 .calc-container {
-  width: 85%;
-  min-width: 300px;
+  display: flex;
+  flex-flow: column nowrap;
+  width: 85vw;
+  max-width: 960px;
+  min-width: 400px;
+  min-height: 450px;
   margin:auto;
   border: 1px solid dimgray;
   border-radius: 5px;
@@ -17,6 +21,10 @@ body {
 } */
 
 div.display-container {
+  flex-grow: 1;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-end;
   background-color: whitesmoke;
   font-family: 'Courier New', Courier, monospace;
 }
@@ -24,9 +32,10 @@ div.display-container {
 div.display-output {
   display:flex;
   flex-flow: column nowrap;
-  justify-content: stretch;
+  justify-content: flex-end;
   align-items: stretch;
-  height: 108px;
+  overflow-y: auto;
+  height: 20vw;
 }
 
 div.output, div.display-input {
@@ -59,6 +68,7 @@ div.result {
 }
 
 div.controls {
+  flex-grow: 4;
   display: flex;
   flex-flow: row nowrap;
   justify-content: stretch;
@@ -67,6 +77,8 @@ div.controls {
 
 div.controls .keypad {
   flex-grow: 5;
+  display: flex;
+  flex-flow: column nowrap;
   margin-right: 4px;
 }
 
@@ -75,6 +87,7 @@ div.controls .operators {
 }
 
 .keypad .keypad-row {
+  flex-grow: 1;
   display: flex;
   flex-flow: row nowrap;
   margin-bottom: 4px;

@@ -13,6 +13,7 @@
 /** Global vars */
 let DISPLAY = ""; // current display value
 let LASTRESULT = 0; // last result for carrying values forward
+let OPERANDS = []; 
 
 /**
  * Main entry point for app
@@ -41,24 +42,50 @@ function clearDisplayOutput() {
   }
 }
 
+/**
+ * Attempt to get the calculated result of current input
+ */
+function getResult() {
+  let op = getOperator();
+  let terms = getFirstTwoTerms(op);
+  let result = operate(op, parseFloat(terms[0]), parseFloat(terms[1]));
+  LASTRESULT = result;
+  return result;
+}
+
+/**
+ * Get all operands in DISPLAY
+ * 
+ * @returns {number} The number of operands currently in DISPLAY
+ */
+function getOperands() {
+  let rx = RegExp(`(?:[${OPS}])`, `i`);
+  let operands = DISPLAY.split(rx).filter(x => x);
+  return operands;
+}
+
 
 /** 
  * Handles various inputs from the keypad/operator keys 
+ * 
+ * @param {string} input String form of input determined by key
  */
 function handleInput(input) {
+  //console.log(operandCount);
   if (input === "=") {
+    if (OPERANDS.length < 2) {
+      return;
+    }
     // attempt to parse input
-    console.log(DISPLAY);
-    let op = getOperator();
-    let terms = getTerms(op);
-    let result = operate(op, parseFloat(terms[0]), parseFloat(terms[1]));
+    let result = getResult();
     pushToDisplayOutput(DISPLAY, result);
-    LASTRESULT = result;
     clearDisplayInput();
     return;
   } else if (input === "."){
     // check if decimal point already exists in display term
-    return;
+    if (OPERANDS[OPERANDS.length-1].indexOf(".") !== -1) {
+      return;
+    }
   } else if (input === "C") {
     if (DISPLAY === "") {
       clearDisplayOutput();
@@ -67,7 +94,19 @@ function handleInput(input) {
     }
     return;
   }
+  if (OPS.includes(input)) {  
+    if (DISPLAY.match(`([${OPS}]$|^$)`, `i`)) {
+      return;
+    }
+
+    if (OPERANDS.length > 1) {
+      let result = getResult();
+      pushToDisplayOutput(DISPLAY, result);
+      DISPLAY = result;
+    }
+  }
   pushToDisplayInput(input);
+  OPERANDS = getOperands();
 }
 
 /**
@@ -76,8 +115,8 @@ function handleInput(input) {
  * @param {string} op The operator in the current DISPLAY equation
  * @returns A length 2 array of terms split by "op"
  */
-function getTerms(op) {
-  return DISPLAY.split(op);
+function getFirstTwoTerms(op) {
+  return DISPLAY.split(op,2);
 }
 
 /**
