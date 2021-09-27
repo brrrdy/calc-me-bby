@@ -8,7 +8,7 @@
  */
 
  const KEYS = ["1","2","3","4","5","6","7","8","9","0",".","="];
- const OPS = ["C","÷", "×", "−", "+"];
+ const OPS = ["⌫","CLR","÷", "×", "−", "+"];
 
 /** Global vars */
 let DISPLAY = ""; // current display value
@@ -16,7 +16,7 @@ let LASTRESULT = 0; // last result for carrying values forward
 let OPERANDS = []; 
 
 /**
- * Main entry point for app
+ * Entry point for app
  */
 function main() {
   createKeypad();
@@ -71,7 +71,17 @@ function getOperands() {
  * @param {string} input String form of input determined by key
  */
 function handleInput(input) {
-  //console.log(operandCount);
+
+  if (input === "⌫") {
+    if (DISPLAY === "") {
+    } else {
+      let nd = DISPLAY.slice(0, -1);
+      clearDisplayInput();
+      pushToDisplayInput(nd);
+    }
+    return;
+  }
+
   if (input === "=") {
     if (OPERANDS.length < 2) {
       return;
@@ -84,7 +94,7 @@ function handleInput(input) {
     if (OPERANDS[OPERANDS.length-1].indexOf(".") !== -1) {
       return;
     }
-  } else if (input === "C") {
+  } else if (input === "CLR") {
     if (DISPLAY === "") {
       clearDisplayOutput();
     } else {
