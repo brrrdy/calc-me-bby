@@ -77,9 +77,7 @@ function handleInput(input) {
       return;
     }
     // attempt to parse input
-    let result = getResult();
-    pushToDisplayOutput(DISPLAY, result);
-    clearDisplayInput();
+    doCalc();
     return;
   } else if (input === "."){
     // check if decimal point already exists in display term
@@ -95,18 +93,39 @@ function handleInput(input) {
     return;
   }
   if (OPS.includes(input)) {  
+    // short circuit if we already have an operator
     if (DISPLAY.match(`([${OPS}]$|^$)`, `i`)) {
       return;
     }
 
     if (OPERANDS.length > 1) {
-      let result = getResult();
-      pushToDisplayOutput(DISPLAY, result);
-      DISPLAY = result;
+      let result = doCalc();
+      if (Number.isFinite(result)) {
+        pushToDisplayInput(result);
+      } else {
+        return;
+      }
     }
   }
   pushToDisplayInput(input);
   OPERANDS = getOperands();
+}
+
+function doCalc() {
+  let result = checkDivByZero() ? `I'm sorry Dave, I'm afraid I can't do that.` : getResult();
+  pushToDisplayOutput(DISPLAY, result);
+  clearDisplayInput();
+  return result;
+}
+
+function checkDivByZero() {
+  let op = getOperator();
+  if (op === '÷' && OPERANDS.length > 1) {
+    if (OPERANDS[1] === '0') {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
