@@ -82,6 +82,7 @@ function getResult() {
  * @returns {number} The number of operands currently in DISPLAY
  */
 function getOperands() {
+  // TODO: refactor operator/operand tracking so this isn't necessary...
   let ops = [];
   for (const op in Operators){ 
     ops.push(Operators[op].symbol);
@@ -115,8 +116,10 @@ function handleInput(input) {
     }
     // attempt to parse input
     doCalc();
+    OPERANDS = [];
     return;
   } else if (input === "."){
+    // TODO: rework to put leading 0 if decimal is the first input
     // check if decimal point already exists in display term
     if (OPERANDS[OPERANDS.length-1].indexOf(".") !== -1) {
       return;
@@ -130,10 +133,15 @@ function handleInput(input) {
     return;
   }
   if (isOperator(input)) {
-    // short circuit if we already have an operator
-    // if (DISPLAY.match(`([${Operators.symbol}]$|^$)`, `i`)) {
-    //   return;
-    // }
+    //short circuit if we already have an operator
+    // TODO: refactor operator/operand tracking so this isn't necessary...
+    let ops = [];
+    for (const op in Operators){ 
+      ops.push(Operators[op].symbol);
+    }
+    if (DISPLAY.match(`([${ops}]$|^$)`, `i`)) {
+      return;
+    }
 
     if (OPERANDS.length > 1) {
       let result = doCalc();
@@ -154,7 +162,7 @@ function handleInput(input) {
  * @returns {string} representation of calulation result
  */
 function doCalc() {
-  let result = checkDivByZero() ? `I'm sorry Dave, I'm afraid I can't do that.` : getResult();
+  let result = checkDivByZero() ? getCheekyErrorText() : getResult();
   pushToDisplayOutput(DISPLAY, result);
   clearDisplayInput();
   return result;
@@ -432,6 +440,22 @@ function division(n1,n2) {
   return n1 / n2;
 }
 
+/**
+ * Returns random result of cheeky error text to display
+ * @returns {string} Cheeky error text
+ */
+function getCheekyErrorText() {
+  const errs = [ 
+    "I'm sorry Dave.",
+    "I'm afraid I can't do that.",
+    "NO MATH FOR YOU!",
+    "I don't think so, Tim.",
+    "It's a no from me, Dawg.",
+    "To err is human."
+  ];
+
+  return errs[Math.floor(Math.random()*(errs.length))];
+}
 
 main();
 
