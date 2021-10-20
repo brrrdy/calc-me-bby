@@ -8,7 +8,20 @@
  */
 
  const KEYS = ["1","2","3","4","5","6","7","8","9","0",".","="];
- const OPS = ["⌫","CLR","÷", "×", "−", "+"];
+
+ /**
+  * Enum for operators.
+  * @readonly
+  * @enum {{name: string, symbol: string}}
+  */
+ const Operators = Object.freeze({
+  BACKSPACE: { name: "backspace", symbol: "⌫"},
+  CLEAR: {name: "clear", symbol: "CLR"},
+  DIVIDE: {name: "divide", symbol: "÷"},
+  MULTIPLY: {name: "multiply", symbol: "×"},
+  SUBTRACT: {name: "subtract", symbol: "−"},
+  ADD: {name: "add", symbol: "+"}
+ });
 
 /** Global vars */
 let DISPLAY = ""; // current display value
@@ -21,6 +34,15 @@ let OPERANDS = [];
 function main() {
   createKeypad();
   createOperators();
+}
+
+function isOperator(symbol) {
+  for (const op in Operators) {
+    if (symbol === Operators[op].symbol) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -46,7 +68,7 @@ function clearDisplayOutput() {
  * Attempt to get the calculated result of current input
  */
 function getResult() {
-  let op = getOperator();
+  const op = getOperator();
   let terms = getFirstTwoTerms(op);
   let result = operate(op, parseFloat(terms[0]), parseFloat(terms[1]));
   LASTRESULT = result;
@@ -59,7 +81,11 @@ function getResult() {
  * @returns {number} The number of operands currently in DISPLAY
  */
 function getOperands() {
-  let rx = RegExp(`(?:[${OPS}])`, `i`);
+  let ops = [];
+  for (const op in Operators){ 
+    ops.push(Operators[op].symbol);
+  }
+  let rx = RegExp(`(?:[${ops}])`, `i`);
   let operands = DISPLAY.split(rx).filter(x => x);
   return operands;
 }
@@ -72,7 +98,7 @@ function getOperands() {
  */
 function handleInput(input) {
 
-  if (input === "⌫") {
+  if (input === Operators.BACKSPACE.symbol) {
     if (DISPLAY === "") {
     } else {
       let nd = DISPLAY.slice(0, -1);
@@ -94,7 +120,7 @@ function handleInput(input) {
     if (OPERANDS[OPERANDS.length-1].indexOf(".") !== -1) {
       return;
     }
-  } else if (input === "CLR") {
+  } else if (input === Operators.CLEAR.symbol) {
     if (DISPLAY === "") {
       clearDisplayOutput();
     } else {
@@ -102,11 +128,11 @@ function handleInput(input) {
     }
     return;
   }
-  if (OPS.includes(input)) {  
+  if (isOperator(input)) {
     // short circuit if we already have an operator
-    if (DISPLAY.match(`([${OPS}]$|^$)`, `i`)) {
-      return;
-    }
+    // if (DISPLAY.match(`([${Operators.symbol}]$|^$)`, `i`)) {
+    //   return;
+    // }
 
     if (OPERANDS.length > 1) {
       let result = doCalc();
@@ -129,9 +155,9 @@ function doCalc() {
 }
 
 function checkDivByZero() {
-  let op = getOperator();
-  if (op === '÷' && OPERANDS.length > 1) {
-    if (OPERANDS[1] === '0') {
+  const op = getOperator();
+  if (op === Operators.DIVIDE.symbol && OPERANDS.length > 1) {
+    if (Number(OPERANDS[1]) === 0) {
       return true;
     }
   }
@@ -154,9 +180,10 @@ function getFirstTwoTerms(op) {
  * @returns First operator in the current DISPLAY equation
  */
 function getOperator() {
-  for (let op of OPS) {
-    if (DISPLAY.indexOf(op) !== -1) {
-      return op;
+  for (const op in Operators) {
+    const operator = Operators[op];
+    if (DISPLAY.indexOf(operator.symbol) !== -1) {
+      return operator.symbol;
     }
   }
 }
@@ -225,10 +252,10 @@ function createOperators() {
 
   const opCol = document.createElement("div");
   opCol.classList.add("operators-col");
-  for (let op of OPS) {
+  for (const op in Operators) {
     const button = document.createElement("button");
     button.classList.add("operator-button");
-    button.textContent = op;
+    button.textContent = Operators[op].symbol;
     button.addEventListener("click", (e) => {
       handleInput(e.target.textContent);
     });
