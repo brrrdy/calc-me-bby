@@ -34,6 +34,7 @@ let OPERANDS = [];
 function main() {
   createKeypad();
   createOperators();
+  registerKeys();
 }
 
 function isOperator(symbol) {
@@ -147,6 +148,11 @@ function handleInput(input) {
   OPERANDS = getOperands();
 }
 
+
+/**
+ * Does calculations
+ * @returns {string} representation of calulation result
+ */
 function doCalc() {
   let result = checkDivByZero() ? `I'm sorry Dave, I'm afraid I can't do that.` : getResult();
   pushToDisplayOutput(DISPLAY, result);
@@ -154,6 +160,10 @@ function doCalc() {
   return result;
 }
 
+/**
+ * Checks if the entered equation is a division by zero
+ * @returns {boolean} true if we are dividing by zero, else false
+ */
 function checkDivByZero() {
   const op = getOperator();
   if (op === Operators.DIVIDE.symbol && OPERANDS.length > 1) {
@@ -168,7 +178,7 @@ function checkDivByZero() {
  * Gets the terms split by the first operator in DISPLAY
  * 
  * @param {string} op The operator in the current DISPLAY equation
- * @returns A length 2 array of terms split by "op"
+ * @returns {array} A length 2 array of terms split by "op"
  */
 function getFirstTwoTerms(op) {
   return DISPLAY.split(op,2);
@@ -287,6 +297,69 @@ function createOutput(equation, result) {
   out.appendChild(res);
 
   return out;
+}
+
+/**
+ * Registers keypad keys to call handleInput with respective key
+ */
+
+function registerKeys() {
+  document.addEventListener('keydown', function(event) {
+    switch (event.code) {
+      case "Numpad0": 
+        handleInput('0');
+        break;
+      case "Numpad1": 
+        handleInput('1');
+        break;
+      case "Numpad2": 
+        handleInput('2');
+        break;
+      case "Numpad3": 
+        handleInput('3');
+        break;
+      case "Numpad4": 
+        handleInput('4');
+        break;
+      case "Numpad5": 
+        handleInput('5');
+        break;
+      case "Numpad6": 
+        handleInput('6');
+        break;
+      case "Numpad7": 
+        handleInput('7');
+        break;
+      case "Numpad8": 
+        handleInput('8');
+        break;
+      case "Numpad9": 
+        handleInput('9');
+        break;
+      case "NumpadDivide": 
+        handleInput(Operators.DIVIDE.symbol);
+        break;
+      case "NumpadMultiply": 
+        handleInput(Operators.MULTIPLY.symbol);
+        break;
+      case "NumpadSubtract":
+        handleInput(Operators.SUBTRACT.symbol);
+        break;
+      case "NumpadAdd":
+        handleInput(Operators.ADD.symbol);
+        break;
+      case "Enter":
+        handleInput('=');
+        break;
+      case "NumpadDecimal":
+        handleInput('.');
+        break;
+    }
+  });
+}
+
+function pressKey(input) { 
+  handleInput(input);
 }
 
 /**
