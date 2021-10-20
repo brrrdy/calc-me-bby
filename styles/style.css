@@ -1,5 +1,5 @@
 body {
-  background-color: blanchedalmond;
+  background-color: snow;
 }
 
 .calc-container {
@@ -10,9 +10,9 @@ body {
   min-width: 400px;
   min-height: 450px;
   margin:auto;
-  border: 1px solid dimgray;
+  border: 1px solid lightslategray;
   border-radius: 5px;
-  background-color: slategrey;
+  background-color: whitesmoke;
   padding: 0.5em;
 }
 
@@ -25,8 +25,9 @@ div.display-container {
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-end;
-  background-color: seashell;
+  background-color: snow;
   font-family: 'Courier New', Courier, monospace;
+  padding: 10px;
 }
 
 div.display-output {
@@ -63,7 +64,7 @@ div.equation::after {
 }
 
 div.result {
-  color: rgb(22,22,22);
+  color: dimgray;
   min-width: 3em;
 }
 
@@ -107,9 +108,9 @@ div.controls .operators {
 
 
 .operator-button {
-  color: whitesmoke;
+  color: dimgray;
   border: none;
-  background-color: rgb(66,22,22);
+  background-color: gainsboro;
   font-weight: bold;
   font-size: 1.5em;
   width: 100%;
@@ -121,9 +122,9 @@ div.controls .operators {
 }
 
 .keypad-button {
-  color: whitesmoke;
+  color: dimgray;
   border: none;
-  background-color: rgb(33,33,66);
+  background-color: lightgray;
   font-size: 2em;
   font-weight: bold;
   width: 100%;
@@ -137,7 +138,7 @@ div.controls .operators {
 }
 
 .keypad-button:hover, .operator-button:hover {
-  box-shadow: inset 0 0 1px 2px rgb(230,230,250); 
+  box-shadow: inset 0 0 1px 2px lightsteelblue; 
 }
 
 /* create blinking cursor */
