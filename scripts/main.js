@@ -362,6 +362,9 @@ function registerKeys() {
       case "NumpadDecimal":
         handleInput('.');
         break;
+      case "Backspace":
+        handleInput(Operators.BACKSPACE.symbol);
+        break;
     }
   });
 }
